@@ -5,5 +5,5 @@ Database scripts from scratch showcasing
 3. Data input and manipulation
 4. Usage of various SQL Clauses
 5. Some differences with T-SQL and PL/SQL
-6. Joins
+6. Joins, Subqueries, stored procedures and functions
 7. 
