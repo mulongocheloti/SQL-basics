@@ -5,9 +5,9 @@ SELECT * FROM orderdetails;
 
 -- SUBQUERIES
 SELECT productCode, productname, msrp FROM products
-	WHERE productCode IN ( SELECT DISTINCT productCode FROM orderdetails
-								WHERE priceEach < 100
-						 );
+	WHERE productCode IN ( 	SELECT DISTINCT productCode FROM orderdetails
+					WHERE priceEach < 100
+			     );
 
 SELECT * FROM CUSTOMERS;
 
@@ -25,7 +25,7 @@ CALL Customers_From_USA();
 
 SELECT DISTINCT country FROM customers;
 
-# SP using IN
+-- STORED PROCEDURE using IN
 DROP PROCEDURE IF EXISTS CustomersFrom;
 DELIMITER //
 CREATE PROCEDURE CustomersFrom (IN countryName VARCHAR(15))
@@ -63,9 +63,9 @@ DELIMITER ;
 
 CALL update_stock('1972 Alfa Romeo GTA', 3052);
 
-/*  The first and last DELIMITER commands are not a part of the stored procedure. The first DELIMITER command changes the default delimiter to //
+/*  	The first and last DELIMITER commands are not a part of the stored procedure. The first DELIMITER command changes the default delimiter to //
 	and the last DELIMITER command changes the delimiter back to the default one which is semicolon (;).
-    This enables the ; delimiter used in the procedure body to be passed through to the server rather than being interpreted by mysql itself.
+    	This enables the ; delimiter used in the procedure body to be passed through to the server rather than being interpreted by mysql itself.
 */
 
 -- Stored procedure Security
@@ -74,6 +74,7 @@ CALL update_stock('1972 Alfa Romeo GTA', 3052);
 
 -- If the DEFINER clause is omitted, the default definer is the user who executes the CREATE PROCEDURE or CREATE FUNCTION statement.
 -- This is the same as specifying DEFINER = CURRENT_USER explicitly.
+
 DROP PROCEDURE IF EXISTS product_count;
 DELIMITER //
 CREATE DEFINER = 'paul'@'localhost' PROCEDURE product_count()
@@ -168,8 +169,7 @@ SHOW FUNCTION STATUS WHERE db = 'classicmodels';
 SELECT * FROM customers;
 SELECT customerName, creditLimit, CustomerLevel(creditLimit) AS Rating FROM customers
 	ORDER BY creditLimit DESC;
-    
-    
+      
 
 -- We can call a function from within a stored procedure but not vice versa
 DROP PROCEDURE IF EXISTS GetCustomerLevel;
