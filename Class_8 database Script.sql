@@ -1,30 +1,35 @@
+DROP DATABASE IF EXISTS Class_8;
 CREATE DATABASE Class_8;
 USE Class_8;
 
 -- SHOW DATABASES;
 -- DROP DATABASE Class_8;
 
-CREATE TABLE Student ( RegNo INT NOT NULL,
+DROP TABLE IF EXISTS Student;
+CREATE TABLE Student ( 	RegNo INT NOT NULL,
 			Stud_Name VARCHAR(20) NOT NULL unique,
 			DateOfBirth DATE CHECK(DateOfBirth <= '2000-01-01' ), /* Date format is diff in t-sql and pl/sql. In T-SQL we can use /, JAN, etc */
 			Residence CHAR(15) DEFAULT 'NAIROBI',
-			PRIMARY KEY (RegNo) );
+			PRIMARY KEY (RegNo)
+		     );
 
 /* Alternatively you can add a primary key as done below:
 ALTER TABLE Student
 ADD CONSTRAINT PRIKEY PRIMARY KEY(RegNo);
 */
 
-CREATE TABLE Results ( STUD_ID INT NOT NULL,
+DROP TABLE IF EXISTS Results;
+CREATE TABLE Results ( 	STUD_ID INT NOT NULL,
 			MATHS INT CHECK (MATHS<=99 AND MATHS>0),
-            LANGUAGES INT CHECK (LANGUAGES<=99 AND LANGUAGES>0),
-            SCIENCE INT CHECK (SCIENCE<=99 AND SCIENCE>0),
-            SOCIALST_RE INT CHECK (SOCIALST_RE<=99 AND SOCIALST_RE>0)
-            );
+            		LANGUAGES INT CHECK (LANGUAGES<=99 AND LANGUAGES>0),
+            		SCIENCE INT CHECK (SCIENCE<=99 AND SCIENCE>0),
+            		SOCIALST_RE INT CHECK (SOCIALST_RE<=99 AND SOCIALST_RE>0)
+            	     );
             
 ALTER TABLE Results ADD CONSTRAINT FKID FOREIGN KEY(STUD_ID) REFERENCES Student(RegNo);
 
-DESC Student; DESCRIBE Results;
+DESC Student; 
+DESCRIBE Results;
 
 SELECT * FROM INFORMATION_SCHEMA.TABLES;
 	-- Gets the list of all tables and views in all the databases within the RDBMS
@@ -42,41 +47,41 @@ SELECT COLUMN_NAME, COLUMN_TYPE, IS_NULLABLE, COLUMN_KEY, COLUMN_DEFAULT, EXTRA 
 -- the second column needs to be put in between your Third and Fourth column of the table   
 ALTER TABLE Student
 	ADD Home_Addr VARCHAR(20) DEFAULT 'New York',
-    ADD Email VARCHAR(30) AFTER DateOfBirth;
+	ADD Email VARCHAR(30) AFTER DateOfBirth;
     
 DESC Student;
 
-	-- VARCHAR() vs CHAR()??   MEMORY ALLOCATION
+-- VARCHAR() vs CHAR()??   MEMORY ALLOCATION
 ALTER TABLE Student MODIFY Home_Addr CHAR(25) NOT NULL; 
 -- In T-SQL we have ALTER TABLE.... ALTER COLUMN.....
 
 -- Single ALTER statment to modify the name and datatype of two of your columns in your table
 ALTER TABLE Student 
 	CHANGE Home_Addr Permanent_Address VARCHAR(25),
-    CHANGE Email Student_Email CHAR(30);
+    	CHANGE Email Student_Email CHAR(30);
     
 DESC Student;
 
 ALTER TABLE Student
 	DROP COLUMN Permanent_Address,
-    DROP COLUMN Student_Email;
+    	DROP COLUMN Student_Email;
          
 INSERT INTO Student (RegNo, Stud_Name, DateOfBirth, Residence)
-	VALUES (811, 'PAUL MULONGO', '1999-06-21', 'BUNGOMA'),
-            (819, 'LAURA MUTHEU','1999-09-19','KITUI'),
-			(812, 'RANDOLPH KITILA', '1998-04-20','NAIROBI'),
-			(814, 'MARY WANJIKU', '1997-03-24', 'THIKA'),
-			(816, 'RONY WAIREGA', '1998-08-20', 'LIMURU'),
-			(817, 'ELVIS ODUOR','1997-09-13','KISUMU'),
-			(818, 'ALLAN PETER','1998-02-14','LIMURU');
+	VALUES 	(811, 'PAUL MULONGO', '1999-06-21', 'BUNGOMA'),
+            	(819, 'LAURA MUTHEU','1999-09-19','KITUI'),
+		(812, 'RANDOLPH KITILA', '1998-04-20','NAIROBI'),
+		(814, 'MARY WANJIKU', '1997-03-24', 'THIKA'),
+		(816, 'RONY WAIREGA', '1998-08-20', 'LIMURU'),
+		(817, 'ELVIS ODUOR','1997-09-13','KISUMU'),
+		(818, 'ALLAN PETER','1998-02-14','LIMURU');
             
 INSERT INTO Student (RegNo, DateOfBirth, Stud_Name, Residence)
 	VALUES  (813, '2000-02-01', 'BRIAN WAEMA', 'MAKINDU'),
-            (815, '2001-05-01', 'BRIDGET MWENGA', 'MACHAKOS'),
-            (820, '2000-08-08', 'SHARON GITOGO','THIKA');
+            	(815, '2001-05-01', 'BRIDGET MWENGA', 'MACHAKOS'),
+            	(820, '2000-08-08', 'SHARON GITOGO','THIKA');
             
 	-- Error Code: 3819. Check constraint 'student_chk_1' is violated.
-    -- Since DateOfBirth should be <= '2000-01-01'
+    	-- Since DateOfBirth should be <= '2000-01-01'
 
 ALTER TABLE Student DROP CONSTRAINT Student_chk_1;
     
@@ -97,11 +102,9 @@ SELECT * FROM Results; SELECT * FROM Student;
 -- In T-SQL we use TOP number | percent Clause
 -- In PL/SQL we use FETCH FIRST number | percent ROWS ONLY
 
-SELECT * FROM Student
-LIMIT 3;
+SELECT * FROM Student LIMIT 3;
 
-SELECT * FROM Student
-LIMIT 4 OFFSET 2; -- Equivalent to LIMIT 2, 4
+SELECT * FROM Student LIMIT 4 OFFSET 2; -- Equivalent to LIMIT 2, 4
 
 SELECT * FROM Student LIMIT 2, 4;
 
@@ -115,17 +118,18 @@ DELETE FROM Results WHERE STUD_ID = 811;
 DELETE FROM Student WHERE RegNo = 811;
 
 -- SOLUTION 2: We can use ON DELETE CASCADE when defining the FOREIGN KEY Constraint
-	-- ALTER TABLE Results ADD CONSTRAINT FKID FOREIGN KEY(STUD_ID) REFERENCES Student(RegNo) ON DELETE CASCADE;
+-- ALTER TABLE Results ADD CONSTRAINT FKID FOREIGN KEY(STUD_ID) REFERENCES Student(RegNo) ON DELETE CASCADE;
     
 -- To find the affected table by ON DELETE CASCADE action
-    /*  USE INFORMATION_SCHEMA;
-        SELECT table_name FROM referential_constraints  
-	    WHERE constraint_schema = 'database_name' AND referenced_table_name = 'parent_table' AND delete_rule = 'CASCADE';
+    	/*  	USE INFORMATION_SCHEMA;
+        	SELECT table_name FROM referential_constraints  
+	    		WHERE constraint_schema = 'database_name' AND referenced_table_name = 'parent_table' AND delete_rule = 'CASCADE';
 	*/
 
+DROP VIEW IF EXISTS Born_90s;
 CREATE VIEW Born_90s AS
 	SELECT Stud_Name, Residence FROM Student
-		WHERE year(DateOfBirth)<2000; 
+		WHERE year(DateOfBirth)<2000;
 
 SELECT * FROM Born_90s;
 
@@ -189,15 +193,15 @@ ALTER TABLE Student
 
 INSERT INTO Student (RegNo, Stud_Name, DateOfBirth,Town)
 	VALUES	(811, 'PAUL MULONGO', '1999-06-21', 'BUNGOMA'),
-			(813, 'BRIAN WAEMA', '2000-02-01', 'MAKINDU'),
-			(812, 'RANDOLPH KITILA', '1998-04-20','NAIROBI'),
-			(814, 'MARY WANJIKU', '1997-03-24', 'THIKA'),
-			(815, 'BRIDGET MWENGA', '2000-05-01', 'MACHAKOS'),
-			(816, 'RONY WAIREGA', '1998-08-20', 'LIMURU'),
-			(817, 'ELVIS ODUOR','1997-09-13','KISUMU'),
-			(818, 'ALLAN PETER','1998-02-14','LIMURU'),
-			(820, 'SHARON GITOGO','2000-08-08','THIKA'),
-			(819, 'LAURA MUTHEU','1999-09-19','KITUI');
+		(813, 'BRIAN WAEMA', '2000-02-01', 'MAKINDU'),
+		(812, 'RANDOLPH KITILA', '1998-04-20','NAIROBI'),
+		(814, 'MARY WANJIKU', '1997-03-24', 'THIKA'),
+		(815, 'BRIDGET MWENGA', '2000-05-01', 'MACHAKOS'),
+		(816, 'RONY WAIREGA', '1998-08-20', 'LIMURU'),
+		(817, 'ELVIS ODUOR','1997-09-13','KISUMU'),
+		(818, 'ALLAN PETER','1998-02-14','LIMURU'),
+		(820, 'SHARON GITOGO','2000-08-08','THIKA'),
+		(819, 'LAURA MUTHEU','1999-09-19','KITUI');
 
 -- Adding the DEFAULT Constraint to already created table column
 ALTER TABLE Student
@@ -230,7 +234,7 @@ ALTER TABLE Student
 
 ALTER TABLE Student 
 	ADD Position INT NOT NULL,
-    ADD Prize DECIMAL(10,2) NOT NULL;
+    	ADD Prize DECIMAL(10,2) NOT NULL;
 
 /* ALTER TABLE only allows columns to be added that can contain nulls, or have a DEFAULT definition specified, or the column being added is an identity 
    or timestamp column, or alternatively if none of the previous conditions are satisfied the table must be empty to allow addition of this column.
@@ -240,19 +244,19 @@ DELETE FROM Student;
 
 INSERT INTO Student (RegNo, Stud_Name, DateOfBirth, Town, Position, Prize)
 	VALUES	(811, 'PAUL MULONGO', '1999-06-21', 'BUNGOMA',1,5000),
-			(813, 'BRIAN WAEMA', '2000-02-01', 'MAKINDU',3,3000),
-			(812, 'RANDOLPH KITILA', '1998-04-20','NAIROBI',5,1500),
-			(814, 'MARY WANJIKU', '1997-03-24', 'THIKA',7,800),
-			(815, 'BRIDGET MWENGA', '2000-05-01', 'MACHAKOS',9,450),
-			(816, 'RONY WAIREGA', '1998-08-20', 'LIMURU',2,4000),
-			(817, 'ELVIS ODUOR','1997-09-13','KISUMU',4,2000),
-			(818, 'ALLAN PETER','1998-02-14','LIMURU',6,1000),
-			(820, 'SHARON GITOGO','2000-08-08','THIKA',8,650),
-			(819, 'LAURA MUTHEU','1999-09-19','KITUI',10,200);
+		(813, 'BRIAN WAEMA', '2000-02-01', 'MAKINDU',3,3000),
+		(812, 'RANDOLPH KITILA', '1998-04-20','NAIROBI',5,1500),
+		(814, 'MARY WANJIKU', '1997-03-24', 'THIKA',7,800),
+		(815, 'BRIDGET MWENGA', '2000-05-01', 'MACHAKOS',9,450),
+		(816, 'RONY WAIREGA', '1998-08-20', 'LIMURU',2,4000),
+		(817, 'ELVIS ODUOR','1997-09-13','KISUMU',4,2000),
+		(818, 'ALLAN PETER','1998-02-14','LIMURU',6,1000),
+		(820, 'SHARON GITOGO','2000-08-08','THIKA',8,650),
+		(819, 'LAURA MUTHEU','1999-09-19','KITUI',10,200);
 
 SELECT * FROM Student WHERE Prize>=1000 ORDER BY Position DESC;
 
-ALTER TABLE Student	ADD CONSTRAINT UniqConstraints UNIQUE(Position, Prize);
+ALTER TABLE Student ADD CONSTRAINT UniqConstraints UNIQUE(Position, Prize);
 
 INSERT INTO Student (RegNo, Stud_Name, DateOfBirth, Town, Position, Prize)
 	VALUES	(824, 'PAULINE MUSENYA', '1998-06-11', 'WOTE',3,3000.00);
@@ -268,20 +272,20 @@ SELECT * FROM Student;
 
 SELECT COLUMN_NAME AS Field, COLUMN_TYPE AS Type, IS_NULLABLE AS `Null`, COLUMN_KEY AS `Key`, COLUMN_DEFAULT AS `Default`, EXTRA AS Extra FROM INFORMATION_SCHEMA.COLUMNS 
 	WHERE TABLE_NAME='Student' AND TABLE_SCHEMA='Class_8'
-    ORDER BY ORDINAL_POSITION ASC;
+    	ORDER BY ORDINAL_POSITION ASC;
 -- equivalent to
 DESC Student;
 
 DELETE FROM Student;
 
-ALTER TABLE Student	ADD CONSTRAINT Prize_limit CHECK(Prize>100);
+ALTER TABLE Student ADD CONSTRAINT Prize_limit CHECK(Prize>100);
 
 -- The CHECK Constraint enables a condition to check the value being entered into a record. If the condition evaluates to false, the record violates the
 -- constraint and it is not entered into the table.
 
 INSERT INTO Student (RegNo, Stud_Name, DateOfBirth, Town, Position, Prize)
 	VALUES	(825, 'PAULINE MUSENYA', '1998-06-11', 'WOTE',15,100.00);
-    -- Error Code: 3819. Check constraint 'Prize_limit' is violated.
+-- Error Code: 3819. Check constraint 'Prize_limit' is violated.
 
 INSERT INTO Student (RegNo, Stud_Name, DateOfBirth, Town, Position, Prize)
 	VALUES	(825, 'PAULINE MUSENYA', '1998-06-11', 'WOTE',15,100.01);
@@ -292,15 +296,15 @@ ALTER TABLE Student DROP CONSTRAINT Prize_limit;
 
 INSERT INTO Student (RegNo, Stud_Name, DateOfBirth, Town, Position, Prize)
 	VALUES	(811, 'PAUL MULONGO', '1999-06-21', 'BUNGOMA',1,5000),
-			(813, 'BRIAN WAEMA', '2000-02-01', 'MAKINDU',3,3000),
-			(812, 'RANDOLPH KITILA', '1998-04-20','NAIROBI',5,1500),
-			(814, 'MARY WANJIKU', '1997-03-24', 'THIKA',7,800),
-			(815, 'BRIDGET MWENGA', '2000-05-01', 'MACHAKOS',9,450),
-			(816, 'RONY WAIREGA', '1998-08-20', 'LIMURU',2,4000),
-			(817, 'ELVIS ODUOR','1997-09-13','KISUMU',4,2000),
-			(818, 'ALLAN PETER','1998-02-14','LIMURU',6,1000),
-			(820, 'SHARON GITOGO','2000-08-08','THIKA',8,650),
-			(819, 'LAURA MUTHEU','1999-09-19','KITUI',10,200);
+		(813, 'BRIAN WAEMA', '2000-02-01', 'MAKINDU',3,3000),
+		(812, 'RANDOLPH KITILA', '1998-04-20','NAIROBI',5,1500),
+		(814, 'MARY WANJIKU', '1997-03-24', 'THIKA',7,800),
+		(815, 'BRIDGET MWENGA', '2000-05-01', 'MACHAKOS',9,450),
+		(816, 'RONY WAIREGA', '1998-08-20', 'LIMURU',2,4000),
+		(817, 'ELVIS ODUOR','1997-09-13','KISUMU',4,2000),
+		(818, 'ALLAN PETER','1998-02-14','LIMURU',6,1000),
+		(820, 'SHARON GITOGO','2000-08-08','THIKA',8,650),
+		(819, 'LAURA MUTHEU','1999-09-19','KITUI',10,200);
 
 SELECT * FROM Student;
 
@@ -310,19 +314,20 @@ SELECT DateOfBirth, DATE_FORMAT(DateOfBirth, '%M-%y-%d') AS modifiedDate FROM st
 SELECT DateOfBirth, DATE_FORMAT(DateOfBirth, '%D %M, %Y') AS modifiedDate FROM student;
 
 -- Joining two tables using primary key and foreign key
-CREATE TABLE Sales	(ID INT NOT NULL,
-					EID VARCHAR(20) NOT NULL,
-					AGE INT NOT NULL,
-					ADDRESS CHAR(25),
-					PRIMARY KEY (ID));
+DROP  TABLE IF EXISTS Sales;
+CREATE TABLE Sales (	ID INT NOT NULL,
+			EID VARCHAR(20) NOT NULL,
+			AGE INT NOT NULL,
+			ADDRESS CHAR(25),
+			PRIMARY KEY (ID));
 -- AND
-DROP TABLE ORDERS;
-CREATE TABLE ORDERS	(Order_ID INT NOT NULL,
-					CUST_ID INT,
-					Order_Date DATE,
-					QTY INT,
-					PRICE INT,
-                    FOREIGN KEY (CUST_ID) REFERENCES Sales(ID));
+DROP TABLE IF EXISTS ORDERS;
+CREATE TABLE ORDERS (	Order_ID INT NOT NULL,
+			CUST_ID INT,
+			Order_Date DATE,
+			QTY INT,
+			PRICE INT,
+                    	FOREIGN KEY (CUST_ID) REFERENCES Sales(ID));
 
 -- OR you can update the table orders after creation using ALTER TABLE and insert the FOREIGN KEY Constraint
 ALTER TABLE ORDERS
@@ -331,8 +336,9 @@ ALTER TABLE ORDERS
 /* 
 CREATE table statement that has a PRIMARY KEY column and have that column auto generate a value on INSERT.
 */
+DROP TABLE IF EXISTS testTable;
 CREATE TABLE testTable ( Number INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-						 Name VARCHAR(20) NOT NULL
+	 		 Name VARCHAR(20) NOT NULL
                          );
   
-  -- To change auto_increment use ALTER TABLE <tablename> AUTO_INCREMENT = 100
+ -- To change auto_increment use ALTER TABLE <tablename> AUTO_INCREMENT = 100
