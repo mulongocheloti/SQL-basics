@@ -27,60 +27,61 @@ Express the following in SQL
     
 */
 
+DROP DATABASE IF EXISTS HotelReservationDB;
 CREATE DATABASE HotelReservationDB;
 USE HotelReservationDB;
 
-CREATE TABLE Hotel( `Hotel-No` INT NOT NULL PRIMARY KEY, 
-					 Name VARCHAR(20), 
-                     City VARCHAR(20), 
-                     State VARCHAR(20), 
-                     Address VARCHAR(20), 
-					`Zip-code` VARCHAR(20), 
-                     Star INT CHECK (Star BETWEEN 1 AND 5)
-				   );
+CREATE TABLE Hotel( 	`Hotel-No` INT NOT NULL PRIMARY KEY, 
+			Name VARCHAR(20), 
+                     	City VARCHAR(20), 
+                     	State VARCHAR(20), 
+                    	Address VARCHAR(20), 
+			`Zip-code` VARCHAR(20), 
+                     	Star INT CHECK (Star BETWEEN 1 AND 5)
+		);
 
 CREATE TABLE Room(`Room-No` INT NOT NULL, 
-				  `Hotel-No` INT NOT NULL, 
+		  `Hotel-No` INT NOT NULL, 
                    Type VARCHAR(50), 
                    Price FLOAT,
                    PRIMARY KEY(`Room-No`, `Hotel-No`),
                    CONSTRAINT fk_RoomHotelno FOREIGN KEY (`Hotel-No`) REFERENCES Hotel(`Hotel-No`)
-				  );
+		);
 
 CREATE TABLE Booking ( `Hotel-No` INT NOT NULL, 
-					   `Guest-No` INT NOT NULL, 
+		       `Guest-No` INT NOT NULL, 
                        `Date-From` DATE NOT NULL, 
                        `Date-To` DATE, 
                        `Room-No` INT,
                         PRIMARY KEY(`Hotel-No`, `Guest-No`, `Date-From`),
                         CONSTRAINT fk_BookingHotelno FOREIGN KEY (`Hotel-No`) REFERENCES Hotel(`Hotel-No`),
                         CONSTRAINT fk_BookingRoomno FOREIGN KEY (`Room-No`) REFERENCES Room(`Room-No`)
-					  );
+			);
                       
 CREATE TABLE Guest ( `Guest-No` INT NOT NULL PRIMARY KEY, 
-					  Name VARCHAR(20), 
+		      Name VARCHAR(20), 
                       City VARCHAR(20), 
                       Address VARCHAR(50), 
-					 `Zip-code` VARCHAR(20)
-				    );
+		     `Zip-code` VARCHAR(20)
+		);
                     
 INSERT INTO Hotel VALUES (567823, 'Robert Treat Hotel', 'Newark', 'New Jersey', 'Avenue B 711', '88274', 4),
-						 (263748, 'Hill Crescent Hotel', 'Ridgeland', 'Mississippi', 'Badger Avenue 715', '39157', 4),
+			(263748, 'Hill Crescent Hotel', 'Ridgeland', 'Mississippi', 'Badger Avenue 715', '39157', 4),
                          (478291, 'Kent Russ Hotel', 'Cleveland Heights', 'Ohio', 'Bedford Street 2653', '44112', 5),
                          (271634, 'Sabina Joy Hotel', 'Old Bridge', 'New Jersey', 'Camella court 3562','08831', 3);
                          
 INSERT INTO Room VALUES (101, 567823, 'Room with 2 Queen Beds', 600.20),
-						(102, 263748, 'Villa 1 Bedroom', 1050.42),
-						(104, 271634, 'Room with 1 King Bed', 500.53),
-						(201, 567823, 'Deluxe Suite', 960.00),
-						(202, 263748, 'Suite with 2 Queen Beds', 845.28),
-						(204, 271634, 'Villa 2 Bedrooms', 1200.65),
-						(301, 567823, 'Suite with 2 Queen Beds', 820.56),
-						(302, 263748, 'Deluxe Suite', 980.48),
-						(304, 478291, 'Suite with 1 King Bed', 650.45);
+			(102, 263748, 'Villa 1 Bedroom', 1050.42),
+			(104, 271634, 'Room with 1 King Bed', 500.53),
+			(201, 567823, 'Deluxe Suite', 960.00),
+			(202, 263748, 'Suite with 2 Queen Beds', 845.28),
+			(204, 271634, 'Villa 2 Bedrooms', 1200.65),
+			(301, 567823, 'Suite with 2 Queen Beds', 820.56),
+			(302, 263748, 'Deluxe Suite', 980.48),
+			(304, 478291, 'Suite with 1 King Bed', 650.45);
                         
 INSERT INTO Booking VALUES  (567823, 285940, '2021-01-30', '2021-03-16', 101),
-							(567823, 285940, '2021-07-01', '2021-11-28', 201),
+			    (567823, 285940, '2021-07-01', '2021-11-28', 201),
                             (567823, 728398, '2021-07-26', '2021-12-03', 301),
                             (567823, 285940, '2022-02-26', '2022-04-26', 201),
                             (271634, 667489, '2021-08-24', '2022-02-01', 204),
@@ -89,7 +90,7 @@ INSERT INTO Booking VALUES  (567823, 285940, '2021-01-30', '2021-03-16', 101),
                             (263748, 102483, '2021-04-18', '2021-08-26', 202);
                             
 INSERT INTO Guest VALUES (285940, 'Parker', 'Montgomery', '23 West Street', '36114'),
-						 (728398, 'John Mills', 'Bettles', '467 Linstock Dr.', '99726'),
+			 (728398, 'John Mills', 'Bettles', '467 Linstock Dr.', '99726'),
                          (667489, 'Ruth Williams', 'Springfield', '38 Horsedon Rd.', '61982'),
                          (367895, 'Sarah Decker', 'Hartford', '76 Little Grenn Estate', '06432'),
                          (167548, 'Paul Wesley', 'Denver', '28 Hense Dr.', '81263'),
@@ -102,31 +103,21 @@ SELECT * FROM Hotel  WHERE City = 'Newark';
 -- List all the guests currently in the hotels in Newark (use today's date as reference).
 SELECT Guest.* FROM Guest
 	LEFT JOIN Booking ON Guest.`Guest-No` = Booking.`Guest-No`
-    LEFT JOIN Hotel ON Booking.`Hotel-No` = Hotel.`Hotel-No`
-    WHERE Hotel.City = 'Newark' AND (`Date-To` BETWEEN CURRENT_DATE AND CAST('2222-12-31' AS DATE));
+    	LEFT JOIN Hotel ON Booking.`Hotel-No` = Hotel.`Hotel-No`
+    	WHERE Hotel.City = 'Newark' AND (`Date-To` BETWEEN CURRENT_DATE AND CAST('2222-12-31' AS DATE));
     
 -- List the guests that are currently in the Robert Treat Hotel in Newark (use today's date as reference)
 SELECT Guest.* FROM Guest
 	LEFT JOIN Booking ON Guest.`Guest-No` = Booking.`Guest-No`
-    LEFT JOIN Hotel ON Booking.`Hotel-No` = Hotel.`Hotel-No`
-    WHERE Hotel.Name = 'Robert Treat Hotel' AND (`Date-To` BETWEEN CURRENT_DATE AND CAST('2222-12-31' AS DATE));
+    	LEFT JOIN Hotel ON Booking.`Hotel-No` = Hotel.`Hotel-No`
+    	WHERE Hotel.Name = 'Robert Treat Hotel' AND (`Date-To` BETWEEN CURRENT_DATE AND CAST('2222-12-31' AS DATE));
     
--- List the guests that have all their bookings (past and present) in the same ..
-	
-
 -- List all the rooms where to Parker stayed at the Robert Treat Hotel in Newark.
 SELECT DISTINCT `Room-No` FROM Booking
 	INNER JOIN Guest ON Booking.`Guest-No` = Guest.`Guest-No`
-    LEFT JOIN Hotel ON Booking.`Hotel-No` = Hotel.`Hotel-No`
-    WHERE Guest.Name = 'Parker' AND Hotel.Name = 'Robert Treat Hotel';
-    
--- List the guests who had an overlapping stay (in the same hotels with at least 1 overlapping day) with Parker in the year 2021.
-	
-    
--- List the guest who never stayed in a hotel in New Jersey
-	
-    
--- List the guests who stayed in all the hotels
+    	LEFT JOIN Hotel ON Booking.`Hotel-No` = Hotel.`Hotel-No`
+    	WHERE Guest.Name = 'Parker' AND Hotel.Name = 'Robert Treat Hotel';
+
                          
                          
                          
