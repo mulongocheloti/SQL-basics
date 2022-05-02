@@ -38,12 +38,11 @@ SELECT * FROM orderdetails
 	WHERE orderLineNumber = 4 AND (productCode LIKE 'S18%' OR productCode LIKE 'S24%'); 
 
 -- We can use string functions on our data
-	/* LEFT, RIGHT, LOWER, UPPER, CONCAT, +, SUBSTR, TRIM, LOCATE
-    */
+-- LEFT, RIGHT, LOWER, UPPER, CONCAT, +, SUBSTR, TRIM, LOCATE
     
 -- Incase the contactLastName has strings with whitespaces the TRIM() removes them.
 SELECT * FROM customers
-WHERE TRIM(contactLastName) = 'King';
+	WHERE TRIM(contactLastName) = 'King';
 
 
 SELECT extension as original, TRIM(BOTH 'x' FROM extension) AS modified FROM employees;
@@ -63,12 +62,3 @@ SELECT category_name AS `Product Category`, SUM(quantity) AS `Number Purchased`,
 	LEFT JOIN products ON categories.category_id = products.category_id
 	LEFT JOIN order_items ON products.product_id = order_items.product_id
     GROUP BY category_name WITH ROLLUP;
-
-
-
-
-
-
-
-
-		
